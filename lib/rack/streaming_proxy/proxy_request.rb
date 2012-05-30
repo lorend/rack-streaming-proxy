@@ -31,12 +31,15 @@ class Rack::StreamingProxy
       @piper = Servolux::Piper.new 'r', :timeout => 30
 
       @piper.child do
-        Net::HTTP.start(uri.host, uri.port) do |http|
+        http = Net::HTTP.new uri.host, uri.port
+        http.use_ssl = uri.port == 443
+        http.start do
           http.request(proxy_request) do |response|
             # at this point the headers and status are available, but the body
             # has not yet been read. start reading it and putting it in the parent's pipe.
             response_headers = {}
             response.each_header {|k,v| response_headers[k] = v}
+            response_headers["Transfer-Encoding"]="Identity"
             @piper.puts response.code.to_i
             @piper.puts response_headers
 
@@ -68,7 +71,6 @@ class Rack::StreamingProxy
     def each
       chunked = @headers["Transfer-Encoding"] == "chunked"
       term = "\r\n"
-
       while chunk = read_from_child
         break if chunk == :done
         if chunked
@@ -88,6 +90,7 @@ class Rack::StreamingProxy
 
     def read_from_child
       val = @piper.gets
+
       raise val if val.kind_of?(Exception)
       val
     end
