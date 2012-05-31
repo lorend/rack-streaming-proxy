@@ -39,6 +39,7 @@ class Rack::StreamingProxy
             # has not yet been read. start reading it and putting it in the parent's pipe.
             response_headers = {}
             response.each_header {|k,v| response_headers[k] = v}
+            response_headers["Transfer-Encoding"] = "Identity"
             @piper.puts response.code.to_i
             @piper.puts response_headers
 
