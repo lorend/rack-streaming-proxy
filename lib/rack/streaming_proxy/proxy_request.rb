@@ -57,6 +57,8 @@ class Rack::StreamingProxy
         @headers = HeaderHash.new(read_from_child)
       end
     rescue => e
+puts "Error Received"
+puts e
       if @piper
         @piper.parent { raise }
         @piper.child { @piper.puts e }
@@ -81,7 +83,7 @@ class Rack::StreamingProxy
           yield chunk
         end
       end
-
+puts chunk
       yield ["0", term, "", term].join if chunked
     end
 
