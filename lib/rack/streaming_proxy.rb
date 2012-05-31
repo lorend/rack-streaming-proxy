@@ -73,7 +73,8 @@ module Rack
         [proxy.status, proxy.headers, proxy]
       rescue => e
 puts "There was an error" 
-       msg = "Proxy error when proxying to #{uri}: #{e.class}: #{e.message}"
+$stdout.flush 
+      msg = "Proxy error when proxying to #{uri}: #{e.class}: #{e.message}"
         env["rack.errors"].puts msg
         env["rack.errors"].puts e.backtrace.map { |l| "\t" + l }
         env["rack.errors"].flush
