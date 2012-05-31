@@ -97,7 +97,9 @@ puts "didn't break"
       val = @piper.gets
 
       raise val if val.kind_of?(Exception)
-      val
+puts "reading"
+puts val 
+     val
     end
 
   end
