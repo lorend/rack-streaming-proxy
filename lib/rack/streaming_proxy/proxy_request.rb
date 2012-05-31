@@ -31,6 +31,7 @@ class Rack::StreamingProxy
       @piper = Servolux::Piper.new 'r', :timeout => 30
 
       @piper.child do
+puts uri.host
         http = Net::HTTP.new uri.host, uri.port
         http.use_ssl = uri.port == 443
         http.start do
@@ -44,6 +45,7 @@ class Rack::StreamingProxy
             @piper.puts response_headers
 
             response.read_body do |chunk|
+puts chunk
               @piper.puts chunk
             end
             @piper.puts :done
