@@ -74,7 +74,11 @@ puts e
       chunked = @headers["Transfer-Encoding"] == "chunked"
       term = "\r\n"
       while chunk = read_from_child
-        if chunked
+puts "check break"
+$stdout.flush 
+      break if chunk == :done
+puts "didn't break" 
+       if chunked
           size = bytesize(chunk)
           next if size == 0
           yield [size.to_s(16), term, chunk, term].join
@@ -83,10 +87,6 @@ puts "yeilding chunk"
 puts chunk
           yield chunk
         end
-puts "check break" 
-$stdout.flush 
-      break if chunk == :done
-puts "didn't break"
       end
       yield ["0", term, "", term].join if chunked
     end
