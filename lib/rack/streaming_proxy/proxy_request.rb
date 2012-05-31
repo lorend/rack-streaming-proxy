@@ -83,7 +83,9 @@ puts "yeilding chunk"
 puts chunk
           yield chunk
         end
-        break if chunk == :done
+puts "check break" 
+       break if chunk == :done
+puts "didn't break"
       end
       yield ["0", term, "", term].join if chunked
     end
