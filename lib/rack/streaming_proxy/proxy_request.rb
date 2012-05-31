@@ -6,7 +6,7 @@ class Rack::StreamingProxy
 
     def initialize(request, uri)
       uri = URI.parse(uri)
-
+puts uri
       method = request.request_method.downcase
       method[0..0] = method[0..0].upcase
 
@@ -74,6 +74,8 @@ puts e
       chunked = @headers["Transfer-Encoding"] == "chunked"
       term = "\r\n"
       while chunk = read_from_child
+puts "putting chunk"
+puts chunk   
         break if chunk == :done
         if chunked
           size = bytesize(chunk)
