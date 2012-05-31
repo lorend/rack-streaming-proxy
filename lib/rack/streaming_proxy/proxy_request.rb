@@ -84,7 +84,8 @@ puts chunk
           yield chunk
         end
 puts "check break" 
-       break if chunk == :done
+$stdout.flush 
+      break if chunk == :done
 puts "didn't break"
       end
       yield ["0", term, "", term].join if chunked
