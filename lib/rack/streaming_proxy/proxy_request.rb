@@ -6,7 +6,6 @@ class Rack::StreamingProxy
 
     def initialize(request, uri)
       uri = URI.parse(uri)
-puts uri
       method = request.request_method.downcase
       method[0..0] = method[0..0].upcase
 
@@ -39,7 +38,7 @@ puts uri
             # has not yet been read. start reading it and putting it in the parent's pipe.
             response_headers = {}
             response.each_header {|k,v| response_headers[k] = v}
-            response_headers["Transfer-Encoding"] = "Identity"
+            #response_headers["Transfer-Encoding"] = "Identity"
             @piper.puts response.code.to_i
             @piper.puts response_headers
 
@@ -57,8 +56,6 @@ puts uri
         @headers = HeaderHash.new(read_from_child)
       end
     rescue => e
-puts "Error Received"
-puts e
       if @piper
         @piper.parent { raise }
         @piper.child { @piper.puts e }
@@ -74,17 +71,12 @@ puts e
       chunked = @headers["Transfer-Encoding"] == "chunked"
       term = "\r\n"
       while chunk = read_from_child
-puts "check break"
-$stdout.flush 
       break if chunk == :done
-puts "didn't break" 
        if chunked
           size = bytesize(chunk)
           next if size == 0
           yield [size.to_s(16), term, chunk, term].join
         else
-puts "yeilding chunk"
-puts chunk
           yield chunk
         end
       end
@@ -97,9 +89,7 @@ puts chunk
     def read_from_child
       val = @piper.gets
 
-      raise val if val.kind_of?(Exception)
-puts "reading"
-puts val 
+      raise val if val.kind_of?(Exception) 
      val
     end
 
